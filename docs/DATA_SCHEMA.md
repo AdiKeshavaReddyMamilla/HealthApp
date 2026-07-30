@@ -57,7 +57,7 @@ to match names exactly:
 The Shortcut Base64-encodes the JSON and opens:
 
 ```
-https://<your-user>.github.io/HealthApp-/#data=<base64 JSON>
+https://adikeshavareddymamilla.github.io/HealthApp/#data=<base64 JSON>
 ```
 
 The app decodes `#data=`, saves the record(s) locally (IndexedDB), then strips

@@ -64,11 +64,23 @@ to explore everything immediately, or **“Import JSON”** to paste readings by
    3. **Enable Pages:** **Settings → Pages → Build and deployment →**
       **Source: “Deploy from a branch” →** Branch: **`main`**, folder **`/ (root)`
       → Save.**
-   4. Wait ~1 minute. Your app is live at:
+   4. Wait ~1 minute, then grab your exact live URL from the green
+      **“✓ Your site is live at …”** banner on the **Settings → Pages** page.
+      It looks like:
 
       ```
-      https://<your-github-username>.github.io/HealthApp-/
+      https://<your-github-username>.github.io/<your-repo-name>/
       ```
+
+      For this repo that is:
+
+      ```
+      https://adikeshavareddymamilla.github.io/HealthApp/
+      ```
+
+      > Tip: the URL's last part is your **repository name**. If you ever rename
+      > the repo, the URL changes too — always copy the current one from
+      > Settings → Pages.
 
 2. **Add it to your Home Screen.**
    Open that URL in **Safari** on your iPhone → **Share** → **Add to Home Screen**.

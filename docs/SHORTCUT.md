@@ -7,13 +7,15 @@ morning — **no laptop, no Mac, no paid app, no account.** It uses Apple's free
 > **Time needed:** ~10 minutes, once.
 
 First, get your app's URL. After you enable GitHub Pages (see the main
-[README](../README.md)), it will be:
+[README](../README.md)), copy it from the green **“✓ Your site is live at …”**
+banner on **Settings → Pages**. For this repo it is:
 
 ```
-https://<your-github-username>.github.io/HealthApp-/
+https://adikeshavareddymamilla.github.io/HealthApp/
 ```
 
-Keep that handy — you'll paste it near the end.
+Keep that handy — you'll paste it near the end. (The last part is your
+repository name; if you rename the repo, re-copy the URL from Settings → Pages.)
 
 ---
 
@@ -69,10 +71,11 @@ Keep that handy — you'll paste it near the end.
 - Add **Text** with exactly:
 
   ```
-  https://<your-github-username>.github.io/HealthApp-/#data=[Base64 Encoded]
+  https://adikeshavareddymamilla.github.io/HealthApp/#data=[Base64 Encoded]
   ```
 
-  Replace `<your-github-username>` and insert the **Base64 Encoded** variable where
+  (Use your own live URL from Settings → Pages if it differs.)
+  Insert the **Base64 Encoded** variable where
   shown.
 - Add **URL Encode** on that text **only if** you prefer — the app accepts both.
 
