@@ -1,113 +1,121 @@
-# Set up the free "morning export" Apple Shortcut
+# Set up the free "morning" Apple Shortcut (easy version)
 
 This one-time setup lets your iPhone push your Apple Watch data into Pulse each
-morning — **no laptop, no Mac, no paid app, no account.** It uses Apple's free
-**Shortcuts** app (pre-installed on your iPhone/iPad).
+morning — **no laptop, no Mac, no paid app, no account, and no technical steps
+like "JSON" or "Base64."** It uses Apple's free **Shortcuts** app (already on your
+iPhone/iPad).
 
-> **Time needed:** ~10 minutes, once.
+The whole idea is simple:
 
-First, get your app's URL. After you enable GitHub Pages (see the main
-[README](../README.md)), copy it from the green **“✓ Your site is live at …”**
-banner on **Settings → Pages**. For this repo it is:
+> **Read a few Health numbers → drop them into a link → open the link.**
+> Pulse reads the numbers straight from the link. That's it.
+
+> **Time needed:** ~5–10 minutes, once.
+
+**First, copy your app's link.** On GitHub, go to **Settings → Pages** and copy the
+address in the green **"✓ Your site is live at …"** banner. For this repo it is:
 
 ```
 https://adikeshavareddymamilla.github.io/HealthApp/
 ```
 
-Keep that handy — you'll paste it near the end. (The last part is your
-repository name; if you rename the repo, re-copy the URL from Settings → Pages.)
+Keep it handy — you'll paste it in Step 5.
 
 ---
 
 ## Part A — Build the Shortcut
 
-1. Open **Shortcuts** → tap **+** (new shortcut) → name it **“Morning Health Export.”**
-2. Add the actions below in order. Tap **+ Add Action** and search for each by name.
+1. Open **Shortcuts** → tap **+** to create a new one → name it **"Morning Health."**
+2. You'll add actions with **+ Add Action** and search each one by name.
 
-### 1. Get HRV
-- Add **Find Health Samples**.
-- Set **Type = Heart Rate Variability**.
-- **Sort by Start Date**, **Order Latest First**, **Limit = 1**.
-- Tap the action's result and rename the *Variable* to **HRV** (long-press → Rename, or use “Set Variable”).
+Each health number takes the **same little 2-action pattern**. Do it three times,
+changing only the **Type**:
 
-> Tip: after each “Find Health Samples”, add a **Set Variable** action to store the
-> result in a clearly named variable (HRV, RHR, Sleep, RR). This keeps the next steps tidy.
+### Step 1 — HRV
+1. Add **Find Health Samples.** Tap to set:
+   - **Type:** Heart Rate Variability
+   - **Sort:** Start Date · **Order:** Latest First · **Limit:** 1
+2. Add **Get Details of Health Samples** → choose detail **Value.**
+3. Add **Set Variable** → name it **HRV.**
 
-### 2. Get Resting Heart Rate
-- **Find Health Samples** → **Type = Resting Heart Rate** → Latest First → Limit 1 → set variable **RHR**.
+### Step 2 — Resting Heart Rate
+Repeat the same three actions, but in **Find Health Samples** set
+**Type = Resting Heart Rate**, and name the variable **RHR.**
 
-### 3. Get Respiratory Rate
-- **Find Health Samples** → **Type = Respiratory Rate** → Latest First → Limit 1 → set variable **RR**.
+### Step 3 — Respiratory Rate
+Repeat again with **Type = Respiratory Rate**, and name the variable **RR.**
 
-### 4. Get Sleep (hours)
-- **Find Health Samples** → **Type = Sleep Analysis** → today’s **Asleep** duration.
-- Use **Calculate Statistics** (Sum of durations) or, simplest, grab the most recent
-  **Sleep** sample’s duration. Convert to **hours** if it’s in minutes
-  (add a **Calculate** action: value **÷ 60**). Set variable **Sleep**.
+> 💤 **Sleep is optional** and is the one slightly fiddly metric, so we leave it out
+> of the easy version — Pulse still calculates your recovery from HRV, resting heart
+> rate and respiratory rate, and just weights them a little differently. You can add
+> sleep later (see "Adding sleep" below).
 
-### 5. Build the data dictionary
-- Add **Dictionary** and create these keys (all **Number**, value = the matching variable):
+### Step 4 — Build the link
+Add a **Text** action and type your link exactly like this, inserting the **HRV**,
+**RHR**, and **RR** variables where shown (tap the variable bar above the keyboard):
 
-  | Key               | Value      |
-  |-------------------|------------|
-  | `hrv`             | HRV        |
-  | `restingHR`       | RHR        |
-  | `sleepHours`      | Sleep      |
-  | `respiratoryRate` | RR         |
+```
+https://adikeshavareddymamilla.github.io/HealthApp/#hrv=HRV&rhr=RHR&rr=RR
+```
 
-  (You can add `date` as **Text** using the **Current Date** formatted as
-  `yyyy-MM-dd`, but it’s optional — Pulse defaults to today.)
+So it reads literally: `.../HealthApp/#hrv=` then the **HRV** variable, `&rhr=` then
+the **RHR** variable, `&rr=` then the **RR** variable. (Use your own link from
+Settings → Pages if it's different.)
 
-### 6. Convert to JSON text
-- Add **Get Dictionary from Input**? No — instead add **Text** and insert the
-  **Dictionary** variable, *or* use the **“Get Text from Input”** action with the
-  Dictionary. The goal is a JSON **string**. (Shortcuts renders a Dictionary as JSON text.)
+### Step 5 — Open Pulse
+Add **Open URLs** → set its input to the **Text** from Step 4.
 
-### 7. Base64-encode it
-- Add **Base64 Encode** → **Input = the JSON text** from step 6.
-  (Line breaks off.)
-
-### 8. Build the URL
-- Add **Text** with exactly:
-
-  ```
-  https://adikeshavareddymamilla.github.io/HealthApp/#data=[Base64 Encoded]
-  ```
-
-  (Use your own live URL from Settings → Pages if it differs.)
-  Insert the **Base64 Encoded** variable where
-  shown.
-- Add **URL Encode** on that text **only if** you prefer — the app accepts both.
-
-### 9. Open the app
-- Add **Open URLs** → input = the URL from step 8.
-
-Tap the play ▶ button once to test. Grant Health read permissions when prompted.
-Pulse should open with your real numbers. 🎉
+Now tap **▶ (play)** to test. The first time, tap **Allow** when it asks to read
+Health data. **Pulse should open showing your real numbers.** 🎉
 
 ---
 
 ## Part B — Run it automatically every morning
 
-1. In Shortcuts, go to the **Automation** tab → **+** → **Create Personal Automation**.
-2. Choose **Time of Day** → set **7:00 AM** (or whenever you wake) → **Daily**.
-3. Action → **Run Shortcut** → pick **Morning Health Export**.
-4. Turn **“Ask Before Running” OFF** so it runs silently and just pops Pulse open
+1. In Shortcuts, open the **Automation** tab → **+** → **Create Personal Automation.**
+2. Choose **Time of Day** → set your wake time (e.g. **7:00 AM**) → **Daily.**
+3. **Next** → **Add Action** → search **Run Shortcut** → pick **Morning Health.**
+4. On the automation's summary screen, turn **Ask Before Running OFF** (and
+   **Notify When Run** off if you like) so it runs quietly and just pops Pulse open
    with your fresh morning summary.
 
-That's it. Each morning your recovery, HRV, resting heart rate, sleep and
-respiratory rate are waiting for you — for free.
+Done — each morning your recovery, HRV, resting heart rate and respiratory rate are
+waiting for you, for free.
+
+---
+
+## Adding sleep later (optional)
+
+Sleep needs a tiny bit of math because Health stores it as a duration:
+
+1. Add another **Find Health Samples** → **Type = Sleep Analysis**,
+   **Sort:** Start Date · **Latest First** · a **Limit** of, say, 20.
+2. Add **Get Details of Health Samples** → **Duration** (this is in **seconds**).
+3. Add **Calculate Statistics** → **Sum** of those durations.
+4. Add **Calculate** → divide by **3600** (seconds → hours). Set variable **Sleep.**
+5. In your Step 4 link, add `&sleep=` and the **Sleep** variable to the end:
+   ```
+   .../HealthApp/#hrv=HRV&rhr=RHR&rr=RR&sleep=Sleep
+   ```
 
 ---
 
 ## Troubleshooting
 
-- **“No data” in the app:** run the Shortcut manually (▶) and check Health
-  permissions (Settings → Privacy → Health → Shortcuts). New Apple Watch metrics
-  can take a few minutes to sync to your iPhone after you wake.
-- **Sleep looks wrong (e.g. 460):** it’s in minutes — make sure step 4 divides by 60.
-- **Want to backfill history?** Use the app’s **Import JSON** button and paste an
-  array of past days (see [DATA_SCHEMA.md](DATA_SCHEMA.md)). Recovery accuracy
-  improves once you have ~2 weeks of data.
-- **Blood pressure?** The Apple Watch cannot measure it. If you own a compatible
-  Bluetooth cuff that writes to Apple Health, we can add it later.
+- **"No data" / numbers don't update:** run the Shortcut manually (▶) and check
+  **Settings → Privacy & Security → Health → Shortcuts** has read access on. Fresh
+  Apple Watch readings can take a few minutes to sync to your iPhone after you wake.
+- **A number looks blank or 0:** you may not have that metric recorded yet today.
+  HRV and resting heart rate are usually recorded overnight; give the Watch a night.
+- **Want to backfill past days?** Use the app's **Import JSON** button
+  (see [DATA_SCHEMA.md](DATA_SCHEMA.md)). Recovery gets sharper after ~2 weeks of data.
+- **Blood pressure?** The Apple Watch can't measure it. If you pair a Bluetooth cuff
+  that writes to Apple Health, we can add it later.
+
+---
+
+### Advanced (optional): the JSON link
+
+Pulse also accepts a `#data=<base64 JSON>` link and full JSON via **Import**, which is
+handy for backfilling many days at once — see [DATA_SCHEMA.md](DATA_SCHEMA.md). The
+simple `#hrv=…&rhr=…` link above is all you need for daily use.

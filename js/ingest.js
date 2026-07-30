@@ -101,23 +101,52 @@
     return list.map(normalizeRecord).filter(Boolean);
   }
 
-  // Read (and clear) any #data= payload from the URL. Returns [] if none.
+  // Parse a "key=value&key=value" string into a plain object.
+  function parseQueryLike(str) {
+    var obj = {};
+    str.split('&').forEach(function (pair) {
+      if (!pair) return;
+      var idx = pair.indexOf('=');
+      if (idx < 0) return;
+      var k = pair.slice(0, idx);
+      var v = pair.slice(idx + 1);
+      try { k = decodeURIComponent(k); v = decodeURIComponent(v); } catch (e) { /* keep raw */ }
+      if (k) obj[k] = v;
+    });
+    return obj;
+  }
+
+  // Read (and clear) any data the Shortcut passed in the URL. Returns [] if none.
+  // Two supported forms:
+  //   Simple (recommended): #hrv=68&rhr=54&sleep=7.7&rr=13.5
+  //   Advanced:             #data=<base64 or plain JSON>
   function readFromHash() {
     var hash = global.location.hash || '';
-    var match = hash.match(/[#&]data=([^&]+)/);
-    if (!match) return [];
-    try {
-      var parsed = decodeBase64Json(decodeURIComponent(match[1]));
-      return normalizePayload(parsed);
-    } catch (e) {
+    var body = hash.replace(/^#/, '');
+    if (!body) return [];
+
+    // Advanced form: #data=...
+    var match = body.match(/(?:^|&)data=([^&]+)/);
+    if (match) {
       try {
-        // Maybe it was plain (not base64) JSON in the URL.
-        return normalizePayload(JSON.parse(decodeURIComponent(match[1])));
-      } catch (e2) {
-        console.warn('Could not parse #data= payload:', e2);
-        return [];
+        return normalizePayload(decodeBase64Json(decodeURIComponent(match[1])));
+      } catch (e) {
+        try {
+          return normalizePayload(JSON.parse(decodeURIComponent(match[1])));
+        } catch (e2) {
+          console.warn('Could not parse #data= payload:', e2);
+          return [];
+        }
       }
     }
+
+    // Simple form: plain key=value pairs straight from the Shortcut.
+    var obj = parseQueryLike(body);
+    if (Object.keys(obj).length) {
+      var rec = normalizeRecord(obj);
+      return rec ? [rec] : [];
+    }
+    return [];
   }
 
   function clearHash() {
