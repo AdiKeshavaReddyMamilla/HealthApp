@@ -3,7 +3,7 @@
  * Caches the app shell so Pulse opens instantly and works without a connection.
  * Bump CACHE when you change any shell file so clients pick up the update.
  */
-var CACHE = 'pulse-v1';
+var CACHE = 'pulse-v2';
 var SHELL = [
   './',
   './index.html',

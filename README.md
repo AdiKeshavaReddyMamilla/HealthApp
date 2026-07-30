@@ -25,6 +25,8 @@ summary** the paid apps (WHOOP, Oura…) charge a subscription for.
   against *your own* rolling baseline, so it adapts to your body over ~2–4 weeks.
 - A plain-language **morning summary** ("You're primed — HRV ▲ 8% vs baseline…").
 - **Trend sparklines** for each metric over the last two weeks.
+- A **Calories** section — active, resting, and total energy for the day.
+- **Today's workouts** — each session with its duration and calories.
 
 While it's still learning your baseline (first ~week) it shows a **“calibrating”**
 badge instead of pretending to be precise.

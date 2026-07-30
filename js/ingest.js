@@ -31,10 +31,24 @@
     rr: 'respiratoryRate',
     spo2: 'spo2',
     bloodoxygen: 'spo2',
+    // Energy / calories (kcal)
+    active: 'activeEnergy',
+    activeenergy: 'activeEnergy',
+    activecalories: 'activeEnergy',
+    activekcal: 'activeEnergy',
+    resting: 'restingEnergy',
+    restingenergy: 'restingEnergy',
+    restingcalories: 'restingEnergy',
+    basal: 'restingEnergy',
+    basalenergy: 'restingEnergy',
+    // Workouts (compact string "Type,minutes,kcal;..." or an array)
+    workouts: 'workouts',
+    workout: 'workouts',
     date: 'date'
   };
 
-  var NUMERIC_FIELDS = ['hrv', 'restingHR', 'sleepHours', 'respiratoryRate', 'spo2'];
+  var NUMERIC_FIELDS = ['hrv', 'restingHR', 'sleepHours', 'respiratoryRate', 'spo2',
+    'activeEnergy', 'restingEnergy'];
 
   function todayISO() {
     var d = new Date();
@@ -82,6 +96,13 @@
       out.sleepHours = Math.round((out.sleepHours / 60) * 100) / 100;
     }
 
+    // Workouts: accept an array of objects, or a compact string the Shortcut
+    // builds: "Running,32,280;Walk,15,60"  (type, minutes, kcal per workout).
+    if (out.workouts !== undefined) {
+      out.workouts = parseWorkouts(out.workouts);
+      if (!out.workouts.length) delete out.workouts;
+    }
+
     if (!out.date || !/^\d{4}-\d{2}-\d{2}$/.test(out.date)) {
       out.date = todayISO();
     }
@@ -89,8 +110,43 @@
 
     var hasMetric = NUMERIC_FIELDS.some(function (f) {
       return typeof out[f] === 'number';
-    });
+    }) || (out.workouts && out.workouts.length > 0);
     return hasMetric ? out : null;
+  }
+
+  // Parse workouts from a compact string or an array into [{type,minutes,kcal}].
+  function parseWorkouts(input) {
+    if (Array.isArray(input)) {
+      return input.map(function (w) {
+        if (typeof w === 'string') return parseWorkoutItem(w.split(','));
+        return {
+          type: (w.type || w.name || 'Workout') + '',
+          minutes: toNum(w.minutes != null ? w.minutes : w.duration),
+          kcal: toNum(w.kcal != null ? w.kcal : (w.energy != null ? w.energy : w.calories))
+        };
+      }).filter(Boolean);
+    }
+    if (typeof input === 'string' && input.trim()) {
+      return input.split(';').map(function (chunk) {
+        return parseWorkoutItem(chunk.split(','));
+      }).filter(Boolean);
+    }
+    return [];
+  }
+
+  function toNum(v) {
+    if (v === undefined || v === null || v === '') return null;
+    var n = parseFloat(v);
+    return isNaN(n) ? null : Math.round(n);
+  }
+
+  function parseWorkoutItem(parts) {
+    if (!parts || !parts.length) return null;
+    var type = (parts[0] || 'Workout').toString().trim() || 'Workout';
+    var minutes = toNum(parts[1]);
+    var kcal = toNum(parts[2]);
+    if (minutes === null && kcal === null) return null;
+    return { type: type, minutes: minutes, kcal: kcal };
   }
 
   // Accept a single record, an array of records, or { records: [...] }.
@@ -190,6 +246,15 @@
       var rhr = 55 + (rnd() - 0.5) * 6 + (hard ? 7 : 0);
       var sleep = 7.4 + (rnd() - 0.5) * 1.6 - (hard ? 1.8 : 0);
       var rr = 14 + (rnd() - 0.5) * 1.5 + (hard ? 1.2 : 0);
+      var active = 480 + (rnd() - 0.5) * 380;         // kcal
+      var resting = 1600 + (rnd() - 0.5) * 160;       // kcal (basal)
+
+      // Sprinkle in a few workouts, more on active days.
+      var pool = [['Run', 32, 300], ['Walk', 28, 130], ['Strength', 45, 260],
+                  ['Cycling', 40, 380], ['Yoga', 30, 120]];
+      var workouts = [];
+      if (rnd() > 0.45) workouts.push(sampleWorkout(pool, rnd));
+      if (rnd() > 0.8) workouts.push(sampleWorkout(pool, rnd));
 
       out.push({
         date: iso,
@@ -197,10 +262,19 @@
         restingHR: Math.round(Math.max(40, rhr)),
         sleepHours: Math.round(Math.max(3, sleep) * 10) / 10,
         respiratoryRate: Math.round(Math.max(9, rr) * 10) / 10,
+        activeEnergy: Math.round(Math.max(120, active)),
+        restingEnergy: Math.round(Math.max(1200, resting)),
+        workouts: workouts,
         source: 'sample'
       });
     }
     return out;
+  }
+
+  function sampleWorkout(pool, rnd) {
+    var w = pool[Math.floor(rnd() * pool.length) % pool.length];
+    var jitter = 0.8 + rnd() * 0.5;
+    return { type: w[0], minutes: Math.round(w[1] * jitter), kcal: Math.round(w[2] * jitter) };
   }
 
   global.HealthApp = global.HealthApp || {};

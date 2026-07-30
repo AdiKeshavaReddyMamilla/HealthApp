@@ -100,6 +100,50 @@ Sleep needs a tiny bit of math because Health stores it as a duration:
 
 ---
 
+## Adding calories (optional)
+
+Calories are stored as many small samples through the day, so you **sum today's**,
+rather than taking the latest one.
+
+**Active energy:**
+1. **Find Health Samples** → **Type = Active Energy** · add filter **Start Date is Today**.
+   (Leave Limit **off** so you get all of today's samples.)
+2. **Get Details of Health Samples** → **Value**.
+3. **Calculate Statistics** → **Sum**. → **Set Variable** → **Active.**
+
+**Resting energy:** repeat the three steps with **Type = Resting Energy**, and name
+the variable **Resting.**
+
+Then extend your Step 4 link with `&active=` and `&resting=`:
+```
+.../HealthApp/#hrv=HRV&rhr=RHR&rr=RR&active=Active&resting=Resting
+```
+Pulse shows **Active**, **Resting**, and their **Total** in the Calories section.
+
+---
+
+## Adding workouts (optional, advanced)
+
+This one uses a loop to list today's workouts.
+
+1. **Find Workouts** → add filter **Start Date is Today**.
+2. **Repeat with Each** (input = the workouts found). Inside the repeat:
+   - **Text** → `[Workout Type],[Duration in min],[Active Energy in kcal];`
+     (insert those three as variables from **Repeat Item**, separated by commas,
+     ending with a semicolon `;`).
+   - **Add to Variable** → **WorkoutList.**
+3. After the repeat, add `&workouts=` and the **WorkoutList** variable to your link:
+   ```
+   .../HealthApp/#hrv=HRV&rhr=RHR&rr=RR&workouts=WorkoutList
+   ```
+   The result looks like `workouts=Run,32,300;Strength,45,260`, and Pulse lists each
+   workout in **Today's workouts**.
+
+> Prefer not to build the loop? You can also add workouts by hand with the app's
+> **Import JSON** button — see [DATA_SCHEMA.md](DATA_SCHEMA.md).
+
+---
+
 ## Troubleshooting
 
 - **"No data" / numbers don't update:** run the Shortcut manually (▶) and check

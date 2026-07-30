@@ -152,6 +152,44 @@ html, body {
 
 .source-note { color: var(--muted); font-size: 12px; text-align: center; margin: -4px 0 0; }
 
+/* ---- Blocks (Calories, Workouts) ---- */
+.block { display: flex; flex-direction: column; gap: 10px; }
+.block-title { margin: 4px 2px 0; font-size: 15px; font-weight: 700; color: var(--text); }
+
+/* Calories: three stat cards */
+.energy-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.energy-card {
+  padding: 16px 14px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  text-align: center;
+}
+.energy-label { color: var(--muted); font-size: 12px; font-weight: 600; }
+.energy-value { font-size: 22px; font-weight: 800; margin-top: 6px; }
+.energy-value .unit { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+/* Workouts list */
+.workouts { padding: 8px 6px; }
+.workout-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--card-border);
+}
+.workout-row:last-child { border-bottom: 0; }
+.workout-dot { font-size: 20px; width: 28px; text-align: center; }
+.workout-type { font-weight: 700; flex: 1; }
+.workout-meta { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.workouts-empty { padding: 14px; margin: 0; text-align: center; }
+
+@media (max-width: 420px) {
+  .energy-value { font-size: 19px; }
+  .energy-card { padding: 14px 8px; }
+}
+
 /* ---- Actions ---- */
 .actions { padding: 18px 20px; }
 .actions-head h2 { margin: 0 0 2px; font-size: 16px; }
