@@ -50,15 +50,19 @@ to explore everything immediately, or **“Import JSON”** to paste readings by
 
 ## Get it running (one-time)
 
-1. **Enable free hosting (GitHub Pages).**
-   In this repo on GitHub: **Settings → Pages → Build and deployment → Source:
-   “GitHub Actions.”** The included workflow (`.github/workflows/pages.yml`)
-   publishes the site automatically on every push.
+1. **Free hosting (GitHub Pages) — mostly automatic.**
+   The included workflow (`.github/workflows/pages.yml`) turns Pages on for you
+   (`enablement: true`) and publishes the site on every push. Just let the
+   **“Deploy Pulse to GitHub Pages”** action finish once.
    Your app URL will be:
 
    ```
    https://<your-github-username>.github.io/HealthApp-/
    ```
+
+   If that action ever fails with *“Get Pages site failed / Not Found”*, open
+   **Settings → Pages → Build and deployment → Source: “GitHub Actions”** once,
+   then re-run the action — after that it stays automatic.
 
 2. **Add it to your Home Screen.**
    Open that URL in **Safari** on your iPhone → **Share** → **Add to Home Screen**.
