@@ -54,11 +54,20 @@ to match names exactly:
 
 ## How it reaches the app
 
-The Shortcut Base64-encodes the JSON and opens:
+There are two link forms. Both save locally (IndexedDB), then strip the data from
+the URL. Everything stays on your device.
+
+**Simple (recommended, one day) — plain `key=value` pairs:**
 
 ```
-https://<your-user>.github.io/HealthApp-/#data=<base64 JSON>
+https://adikeshavareddymamilla.github.io/HealthApp/#hrv=68&rhr=54&rr=13.5&sleep=7.7
 ```
 
-The app decodes `#data=`, saves the record(s) locally (IndexedDB), then strips
-the data from the URL. Everything stays on your device.
+The keys accept the same aliases as above (`hrv`, `rhr`, `rr`, `sleep`, `date`, …).
+This is what the easy Shortcut in [SHORTCUT.md](SHORTCUT.md) builds.
+
+**Advanced (one or many days) — Base64 or plain JSON:**
+
+```
+https://adikeshavareddymamilla.github.io/HealthApp/#data=<base64 JSON>
+```

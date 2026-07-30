@@ -218,6 +218,12 @@
     $('#import-close').addEventListener('click', closeDialog);
     $('#year').textContent = new Date().getFullYear();
 
+    // When Pulse is already open and the morning Shortcut re-opens it with a new
+    // #… payload, the browser doesn't reload — so re-ingest on hash changes.
+    global.addEventListener('hashchange', function () {
+      ingestFromHash().then(function (changed) { if (changed) reload(); });
+    });
+
     ingestFromHash()
       .then(reload)
       .then(registerSW);
