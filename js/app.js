@@ -119,6 +119,75 @@
     });
   }
 
+  function kcal(n) {
+    return typeof n === 'number' ? n.toLocaleString() : '—';
+  }
+
+  // Calories: Active + Resting = Total, shown as three stat cards.
+  function renderEnergy(today) {
+    var wrap = $('#energy');
+    if (!wrap) return;
+    var active = today && typeof today.activeEnergy === 'number' ? today.activeEnergy : null;
+    var resting = today && typeof today.restingEnergy === 'number' ? today.restingEnergy : null;
+    var total = (active || 0) + (resting || 0);
+    var hasAny = active !== null || resting !== null;
+
+    wrap.innerHTML =
+      card('Active', active, '#ff8c42') +
+      card('Resting', resting, '#4fd1ff') +
+      card('Total', hasAny ? total : null, '#22e39b');
+
+    function card(label, val, color) {
+      return '<div class="energy-card">' +
+        '<div class="energy-label">' + label + '</div>' +
+        '<div class="energy-value" style="color:' + color + '">' + kcal(val) +
+          ' <span class="unit">kcal</span></div>' +
+        '</div>';
+    }
+  }
+
+  // Today's workouts as a list.
+  function renderWorkouts(today) {
+    var section = $('#workouts-section');
+    var list = $('#workouts');
+    if (!section || !list) return;
+    var workouts = (today && Array.isArray(today.workouts)) ? today.workouts : [];
+
+    if (!workouts.length) {
+      section.hidden = false;
+      list.innerHTML = '<p class="muted small workouts-empty">No workouts recorded today.</p>';
+      return;
+    }
+    section.hidden = false;
+    list.innerHTML = workouts.map(function (w) {
+      var mins = typeof w.minutes === 'number' ? w.minutes + ' min' : '';
+      var en = typeof w.kcal === 'number' ? w.kcal + ' kcal' : '';
+      var meta = [mins, en].filter(Boolean).join(' · ');
+      return '<div class="workout-row">' +
+        '<span class="workout-dot">' + workoutIcon(w.type) + '</span>' +
+        '<span class="workout-type">' + escapeHtml(w.type || 'Workout') + '</span>' +
+        '<span class="workout-meta">' + meta + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function workoutIcon(type) {
+    var t = (type || '').toLowerCase();
+    if (/run/.test(t)) return '🏃';
+    if (/walk|hik/.test(t)) return '🚶';
+    if (/cycl|bike|ride/.test(t)) return '🚴';
+    if (/strength|weight|lift|gym/.test(t)) return '🏋️';
+    if (/yoga|stretch|pilates/.test(t)) return '🧘';
+    if (/swim/.test(t)) return '🏊';
+    return '💪';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
   function renderSourceNote() {
     var note = $('#source-note');
     if (!state.today) { note.textContent = ''; return; }
@@ -139,6 +208,8 @@
     renderSummary(summary);
     renderRing(state.recovery);
     renderTiles(state.recovery, state.history);
+    renderEnergy(state.today);
+    renderWorkouts(state.today);
     renderSourceNote();
   }
 
