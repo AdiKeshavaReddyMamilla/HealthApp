@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Pulse — Recovery & Health</title>
+  <meta name="description" content="Your private, free Apple Watch recovery dashboard." />
+  <meta name="theme-color" content="#0b0f14" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pulse" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">Pulse</span>
+    </div>
+    <span class="brand-tag">free · private · on-device</span>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Morning summary hero -->
+    <section class="hero card">
+      <div class="hero-text">
+        <p id="greeting" class="greeting">Good morning</p>
+        <h1 id="summary-headline" class="headline">Loading…</h1>
+        <p id="summary-advice" class="advice"></p>
+        <ul id="summary-lines" class="summary-lines"></ul>
+      </div>
+
+      <div class="ring-wrap">
+        <div id="recovery-ring" class="ring" style="--pct:0;--ring-color:#3a4553;">
+          <div class="ring-inner">
+            <span id="recovery-score" class="ring-score">--</span>
+            <span class="ring-unit">%</span>
+            <span id="recovery-band" class="ring-band">Recovery</span>
+          </div>
+        </div>
+        <span id="calibrating-badge" class="calibrating" hidden>calibrating</span>
+      </div>
+    </section>
+
+    <!-- Metric tiles -->
+    <section id="metric-tiles" class="tiles" aria-label="Metrics"></section>
+
+    <p id="source-note" class="source-note"></p>
+
+    <!-- Controls -->
+    <section class="actions card">
+      <div class="actions-head">
+        <h2>Your data</h2>
+        <p class="muted">Everything stays on this device. No account, no cloud, no cost.</p>
+      </div>
+      <div class="actions-row">
+        <button id="btn-import" class="btn">Import JSON</button>
+        <button id="btn-sample" class="btn ghost">Load sample data</button>
+        <button id="btn-clear" class="btn danger-ghost">Clear all</button>
+      </div>
+      <p class="muted small">
+        Auto-import from your Apple Watch each morning by setting up the free Shortcut —
+        see <a href="docs/SHORTCUT.md">docs/SHORTCUT.md</a>.
+      </p>
+    </section>
+
+    <footer class="foot">
+      <p class="muted small">
+        Pulse computes recovery from HRV, resting heart rate, sleep and respiratory rate,
+        relative to your personal baseline. Not a medical device.
+        © <span id="year">2026</span>
+      </p>
+    </footer>
+  </main>
+
+  <!-- Import dialog -->
+  <div id="import-dialog" class="dialog" hidden>
+    <div class="dialog-card card">
+      <h2>Import readings</h2>
+      <p class="muted small">
+        Paste JSON — a single day, or an array of days. Example:<br />
+        <code>{"date":"2026-07-30","hrv":68,"restingHR":54,"sleepHours":7.7,"respiratoryRate":13.5}</code>
+      </p>
+      <textarea id="import-text" placeholder='{"hrv":68,"restingHR":54,"sleepHours":7.7,"respiratoryRate":13.5}'></textarea>
+      <div class="dialog-actions">
+        <button id="import-close" class="btn ghost">Cancel</button>
+        <button id="import-apply" class="btn">Import</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/recovery.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ingest.js"></script>
+  <script src="js/summary.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
