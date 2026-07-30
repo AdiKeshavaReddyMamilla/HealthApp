@@ -50,19 +50,25 @@ to explore everything immediately, or **“Import JSON”** to paste readings by
 
 ## Get it running (one-time)
 
-1. **Free hosting (GitHub Pages) — mostly automatic.**
-   The included workflow (`.github/workflows/pages.yml`) turns Pages on for you
-   (`enablement: true`) and publishes the site on every push. Just let the
-   **“Deploy Pulse to GitHub Pages”** action finish once.
-   Your app URL will be:
+1. **Turn on free hosting (GitHub Pages).** All of this can be done from your
+   iPhone/iPad in the browser — no laptop needed.
 
-   ```
-   https://<your-github-username>.github.io/HealthApp-/
-   ```
+   > **Why these steps?** GitHub Pages is only free on **public** repositories.
+   > Your app code being public is fine — your Apple Watch data is **never** in
+   > the repo; it lives only on your phone.
 
-   If that action ever fails with *“Get Pages site failed / Not Found”*, open
-   **Settings → Pages → Build and deployment → Source: “GitHub Actions”** once,
-   then re-run the action — after that it stays automatic.
+   1. **Make the repo public:** repo **Settings → General →** scroll to
+      **Danger Zone → Change repository visibility → Make public.**
+   2. **Get the code onto `main`:** open Pull Request **#1** and tap
+      **“Merge pull request.”**
+   3. **Enable Pages:** **Settings → Pages → Build and deployment →**
+      **Source: “Deploy from a branch” →** Branch: **`main`**, folder **`/ (root)`
+      → Save.**
+   4. Wait ~1 minute. Your app is live at:
+
+      ```
+      https://<your-github-username>.github.io/HealthApp-/
+      ```
 
 2. **Add it to your Home Screen.**
    Open that URL in **Safari** on your iPhone → **Share** → **Add to Home Screen**.
